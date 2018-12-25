@@ -1,31 +1,41 @@
 package main
 
 import (
-	//"os"
 	"io/ioutil"
-	"luago/go/src/luago/binchunk"
 	"fmt"
+	"os"
+	"luago/go/src/luago/binchunk"
 	. "luago/go/src/luago/vm"
+	. "luago/go/src/luago/api"
+	. "luago/go/src/luago/state"
 )
 
 func main() {
-	//if len(os.Args) > 1 {
-	//	data, err := ioutil.ReadFile(os.Args[1])
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//
-	//	proto := binchunk.Undump(data)
-	//	list(proto)
-	//}
 
-	data, err := ioutil.ReadFile("luac.out")
+	filename := luafileFromArgs()
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		panic(err)
 	}
 
 	proto := binchunk.Undump(data)
 	list(proto)
+
+	//ls := state
+
+}
+
+func luafileFromArgs() string {
+
+	filename := "luac.out"
+
+	if len(os.Args) > 1 {
+		filename = os.Args[1]
+	}
+	return filename
+}
+
+func printStack(ls LuaState)  {
 
 }
 
@@ -116,7 +126,6 @@ func printOperands(i Instruction) {
 		ax := i.Ax()
 		fmt.Printf("%d", -1-ax)
 	}
-
 }
 
 func printDetail(f *binchunk.Prototype) {

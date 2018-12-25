@@ -1,17 +1,30 @@
 package main
 
 import (
-	"io/ioutil"
 	"fmt"
 	"os"
 	"luago/go/src/luago/binchunk"
 	. "luago/go/src/luago/vm"
 	. "luago/go/src/luago/api"
-	. "luago/go/src/luago/state"
+	//. "luago/go/src/luago/state"
+	"io/ioutil"
+	"luago/go/src/luago/state"
 )
 
 func main() {
 
+	testStack()
+
+}
+
+func testStack() {
+	ls := state.New()
+
+	ls.PushBoolean(true)
+	printStack(ls)
+}
+
+func testUndump() {
 	filename := luafileFromArgs()
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -20,9 +33,6 @@ func main() {
 
 	proto := binchunk.Undump(data)
 	list(proto)
-
-	//ls := state
-
 }
 
 func luafileFromArgs() string {
@@ -35,8 +45,23 @@ func luafileFromArgs() string {
 	return filename
 }
 
-func printStack(ls LuaState)  {
+func printStack(ls LuaState) {
+	top := ls.GetTop()
 
+	for i := 1; i <= top; i++ {
+		t := ls.Type(i)
+		switch t {
+		case LUA_TBOOLEAN:
+			fmt.Printf("[%t]", ls.ToBoolean(i))
+		case LUA_TNUMBER:
+			fmt.Printf("[%g]", ls.ToNumber(i))
+		case LUA_TSTRING:
+			fmt.Printf("[%q]", ls.ToString(i))
+		default: // other values
+			fmt.Printf("[%s]", ls.TypeName(t))
+		}
+	}
+	fmt.Println()
 }
 
 func list(f *binchunk.Prototype) {

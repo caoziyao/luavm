@@ -4,6 +4,9 @@ type LuaType = int
 
 type LuaState interface {
 	GetTop() int
+
+	Copy(fromIdx, toIdx int)
+
 	Type(idx int) LuaType
 
 	/* access functions (stack -> Go) */

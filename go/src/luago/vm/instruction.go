@@ -1,5 +1,7 @@
 package vm
 
+import "luago/go/src/luago/api"
+
 const MAXARG_Bx = 1<<18 - 1       // 262143
 const MAXARG_sBx = MAXARG_Bx >> 1 // 131071
 
@@ -11,7 +13,9 @@ func (self Instruction) Opcode() int {
 }
 
 // 从 iABC 模式指令 提取参数
+// b(9) c(9) a(8) move(6)
 func (self Instruction) ABC() (a, b, c int) {
+
 	a = int(self >> 6 & 0xFF)
 	c = int(self >> 14 & 0x1FF)
 	b = int(self >> 23 & 0x1FF)
@@ -50,4 +54,13 @@ func (self Instruction) BMode() byte  {
 
 func (self Instruction) CMode() byte  {
 	return opcodes[self.Opcode()].argCMode
+}
+
+func (self Instruction) Execute(vm api.LuaVM)  {
+	action := opcodes[self.Opcode()].action
+	if action != nil {
+		action(self, vm)
+	} else {
+		panic(self.OpName())
+	}
 }

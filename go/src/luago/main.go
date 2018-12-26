@@ -20,6 +20,7 @@ func main() {
 func testStack() {
 	ls := state.New()
 
+	testUndump()
 	ls.PushBoolean(true)
 	printStack(ls)
 }
@@ -37,7 +38,7 @@ func testUndump() {
 
 func luafileFromArgs() string {
 
-	filename := "luac.out"
+	filename := "1.out"
 
 	if len(os.Args) > 1 {
 		filename = os.Args[1]
